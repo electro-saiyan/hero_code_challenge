@@ -1,0 +1,54 @@
+# TEST
+Each device has a config, that stores data about the device and pills stored in it.
+Config could be sent from device or from fronend application. Formats are different,
+* from device:
+{
+    "Table": {
+        "device": {
+            "passcode": "1234",
+            "timezone_name": "America/New_York"
+        },
+        "consumables": [
+            {
+                "id": "id_1",
+                "name": "Vitamin C",
+                "expiration_date": "2020-03-14",
+                "dosage": "200 mg",
+                "passcode_mandatory": false,
+                "form": "Cap",
+                "max_doses": 4
+            }, ...
+        ],
+        "slots": [
+            {
+                "slot_index": 1,
+                "consumable_id": "id_1",
+                "exact_pill_count": 20
+            }, ...
+        ]
+    }
+}
+* from frontend app:
+{
+    "passcode": "1234",
+    "timezone_name": "America/New_York",
+    "pills": [
+        {
+            "slot": 1,
+            "name": "Vitamin C",
+            "dosage": "200 mg",
+            "expires": "2020-03-14",
+            "passcode_required": true,
+            "form": "Cap",
+            "exact_pill_count": 10,
+            "max_manual_doses": 4,
+        }, ...
+    ]
+}
+_note_: not only formats differ, but field names as well (e.g. "passcode_required" / "passcode_mandatory")
+## Task
+Using django framework + django rest framework for API:
+1. create django models to store device config and pills; use device_id as device identifier field. Each change should generate new config which should be marked as active, and old should be deactivated, to keep all changes history in database.
+2. create route /api/device-config/ to save config sent from device; it receives JSON via POST with device_id and config_json (in device format) parameters. Config should be saved only if changes are detected.
+3. create route /api/frontend-config/ to save config sent from frontend; it receives JSON via POST with device_id and config_json (in frontend format) parameters. Config should be saved only if changes are detected.
+4. prepare tests for both routes.
