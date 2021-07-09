@@ -1,6 +1,8 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
 from .models import Pill, DeviceConfig
 from .serializers import PillSerializer, DeviceConfigSerializer
 
@@ -36,6 +38,8 @@ def create_pills(pills, device_id):
 
 
 class BaseConfigHandler(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def _get_existing_data(self):
         self.pills = Pill.objects.all().filter(device_id=self.device_id, active=True)
